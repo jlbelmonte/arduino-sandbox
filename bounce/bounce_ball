@@ -1,0 +1,195 @@
+#include <Adafruit_GFX.h>
+#include <RGBmatrixPanel.h>
+
+#define CLK 11 //change to 11 if using the Arduino Mega 2560
+#define LAT 10
+#define OE  9
+#define A   A0
+#define B   A1
+#define C   A2
+
+RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, true);
+
+void setup() {
+  matrix.begin();
+}
+
+int x = 0;
+int y =0;
+int horizontalDir = 1;
+int verticalDir = 1;
+void loop() {
+  matrix.fillScreen(0); //clears screen, prepares for a redraw
+  drawGround();
+  if (x<0 || x>25) {
+    horizontalDir = -1 * horizontalDir;
+  }
+  if (y > 10 || y< 0) {
+    verticalDir = -1 * verticalDir;
+  }
+
+  x += 1 * horizontalDir;
+  y += 1 * verticalDir;  
+  if (ballExplodes()){
+    x = random(0,32);
+    y = random(0,16);
+    drawExplosion();
+  } 
+  else {
+    drawBall(x, y);
+  }
+
+  matrix.swapBuffers(false); //applys draw commands to display
+  delay(180); 
+}
+
+void drawExplosion(){
+  matrix.fillScreen(0); //clears screen, prepares for a redraw
+  drawGround();
+  stepOne();
+  delay(300);
+    matrix.fillScreen(0); //clears screen, prepares for a redraw
+  drawGround();
+  stepTwo();
+    delay(450);
+    matrix.fillScreen(0); //clears screen, prepares for a redraw
+  drawGround();
+  stepThree();
+  delay(500);
+}
+
+void stepThree(){
+  matrix.drawPixel(x + 2, y + 1, matrix.Color888(209, 213, 13, true));
+  matrix.drawPixel(x + 8, y + 1, matrix.Color888(209, 213, 13, true));
+  matrix.drawPixel(x + 0, y + 2, matrix.Color888(213, 120, 7, true));
+  matrix.drawPixel(x + 2, y + 3, matrix.Color888(213, 120, 7, true));
+  matrix.drawPixel(x + 4, y + 4, matrix.Color888(213, 26, 4, true));
+  matrix.drawPixel(x + 6, y + 4, matrix.Color888(213, 120, 7, true));
+  matrix.drawPixel(x + 4, y + 5, matrix.Color888(209, 213, 13, true));
+  matrix.drawPixel(x + 5, y + 5, matrix.Color888(213, 26, 4, true));
+  matrix.drawPixel(x + 2, y + 6, matrix.Color888(209, 213, 13, true));
+  matrix.drawPixel(x + 1, y + 7, matrix.Color888(209, 213, 13, true));
+  matrix.drawPixel(x + 5, y + 7, matrix.Color888(213, 120, 7, true));
+  matrix.drawPixel(x + 1, y + 8, matrix.Color888(209, 213, 13, true));
+  matrix.drawPixel(x + 9, y + 8, matrix.Color888(213, 120, 7, true));
+  matrix.drawPixel(x + 3, y + 9, matrix.Color888(213, 120, 7, true));
+
+}
+void stepTwo(){
+  matrix.drawPixel(x + 0, y + 0, matrix.Color888(213, 129, 16, true));
+  matrix.drawPixel(x + 4, y + 0, matrix.Color888(213, 129, 16, true));
+  matrix.drawPixel(x + 1, y + 1, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 3, y + 1, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 0, y + 2, matrix.Color888(213, 129, 16, true));
+  matrix.drawPixel(x + 2, y + 2, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 4, y + 2, matrix.Color888(213, 129, 16, true));
+  matrix.drawPixel(x + 1, y + 3, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 3, y + 3, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 0, y + 4, matrix.Color888(213, 129, 16, true));
+  matrix.drawPixel(x + 4, y + 4, matrix.Color888(213, 129, 16, true));
+
+}
+void stepOne(){
+  matrix.drawPixel(x + 0, y + 0, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 1, y + 0, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 2, y + 0, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 0, y + 1, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 1, y + 1, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 2, y + 1, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 0, y + 2, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 1, y + 2, matrix.Color888(213, 22, 5, true));
+  matrix.drawPixel(x + 2, y + 2, matrix.Color888(213, 22, 5, true));
+}
+boolean ballExplodes(){
+  // y > 7 means risk
+  if (y>7) {
+    return x > 11 && x < 19;
+  }
+  return false;
+}
+
+void drawGround(){
+  int x =0; 
+  int y =0;
+  matrix.drawPixel(x + 14, y + 13, matrix.Color888(213, 145, 8, true));
+  matrix.drawPixel(x + 0, y + 14, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 1, y + 14, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 14, y + 14, matrix.Color888(213, 145, 8, true));
+  matrix.drawPixel(x + 30, y + 14, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 31, y + 14, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 0, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 1, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 2, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 3, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 4, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 5, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 6, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 7, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 8, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 9, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 10, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 11, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 12, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 13, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 14, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 15, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 16, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 17, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 18, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 19, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 20, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 21, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 22, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 23, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 24, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 25, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 26, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 27, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 28, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 29, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 30, y + 15, matrix.Color888(117, 255, 8, true));
+  matrix.drawPixel(x + 31, y + 15, matrix.Color888(117, 255, 8, true));
+
+}
+
+
+void drawBall(int x, int y){
+  matrix.drawPixel(x + 2, y + 0, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 3, y + 0, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 4, y + 0, matrix.Color888(255, 254, 248, true));
+  matrix.drawPixel(x + 1, y + 1, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 2, y + 1, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 3, y + 1, matrix.Color888(255, 254, 248, true));
+  matrix.drawPixel(x + 4, y + 1, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 5, y + 1, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 0, y + 2, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 1, y + 2, matrix.Color888(255, 166, 5, true));
+  matrix.drawPixel(x + 2, y + 2, matrix.Color888(255, 254, 248, true));
+  matrix.drawPixel(x + 3, y + 2, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 4, y + 2, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 5, y + 2, matrix.Color888(255, 254, 248, true));
+  matrix.drawPixel(x + 6, y + 2, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 0, y + 3, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 1, y + 3, matrix.Color888(255, 254, 248, true));
+  matrix.drawPixel(x + 2, y + 3, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 3, y + 3, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 4, y + 3, matrix.Color888(255, 254, 248, true));
+  matrix.drawPixel(x + 5, y + 3, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 6, y + 3, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 1, y + 4, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 2, y + 4, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 3, y + 4, matrix.Color888(255, 254, 248, true));
+  matrix.drawPixel(x + 4, y + 4, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 5, y + 4, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 2, y + 5, matrix.Color888(255, 254, 248, true));
+  matrix.drawPixel(x + 3, y + 5, matrix.Color888(255, 150, 8, true));
+  matrix.drawPixel(x + 4, y + 5, matrix.Color888(255, 150, 8, true));
+
+}
+
+
+
+
+
+
+
